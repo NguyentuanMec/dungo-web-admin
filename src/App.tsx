@@ -6,28 +6,36 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_SUPABASE_URL + "/rest/v1/worker_applications", {
-      headers: {
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-        Authorization: "Bearer " + import.meta.env.VITE_SUPABASE_ANON_KEY,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchWorkers = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/worker_applications`,
+          {
+            headers: {
+              apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        console.log("📦 Kết quả từ Supabase:", data);
+
         if (Array.isArray(data)) {
           setWorkers(data);
-        } else if (data && Array.isArray(data.data)) {
-          setWorkers(data.data);
         } else {
-          console.error("⚠️ Dữ liệu không đúng định dạng:", data);
-          setWorkers([]);
+          console.warn("⚠️ Dữ liệu trả về KHÔNG PHẢI MẢNG:", data);
+          setWorkers([]); // Tránh lỗi .map
         }
+      } catch (error) {
+        console.error("❌ Lỗi khi gọi Supabase API:", error);
+        setWorkers([]);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ Lỗi khi fetch dữ liệu:", err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchWorkers();
   }, []);
 
   return (
@@ -47,15 +55,14 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(workers) &&
-                workers.map((w) => (
-                  <tr key={w.id}>
-                    <td>{w.full_name}</td>
-                    <td>{w.phone_number}</td>
-                    <td>{w.location}</td>
-                    <td>{w.description}</td>
-                  </tr>
-                ))}
+              {workers.map((w) => (
+                <tr key={w.id}>
+                  <td>{w.full_name}</td>
+                  <td>{w.phone_number}</td>
+                  <td>{w.location}</td>
+                  <td>{w.description}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}
