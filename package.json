@@ -1,14 +1,12 @@
 {
   "name": "dungo-web-admin",
   "version": "1.0.0",
-  {
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "postinstall": "chmod +x node_modules/.bin/vite"
   },
-  "type": "module"
-  }
   "dependencies": {
     "@vitejs/plugin-react": "^4.6.0",
     "react": "^18.2.0",
