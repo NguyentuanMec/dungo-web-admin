@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient"; 
 
 export default function AdminDashboard() {
-  const [workers, setWorkers] = useState([]);
+  const [workers, setWorkers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch(import.meta.env.VITE_SUPABASE_URL + "/rest/v1/worker_applications", {
-      headers: {
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-        Authorization: "Bearer " + import.meta.env.VITE_SUPABASE_ANON_KEY,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setWorkers(data);
-        setLoading(false);
-      });
-  }, []);
+useEffect(() => {
+  const fetchWorkers = async () => {
+    const { data, error } = await supabase.from("worker_applications").select("*");
+    if (error) {
+      console.error("Lỗi lấy danh sách thợ:", error);
+    } else {
+      setWorkers(data);
+    }
+    setLoading(false);
+  };
+
+  fetchWorkers();
+}, []);
+
 
   return (
     <main className="min-h-screen bg-gray-100 py-8 px-4 md:px-20">

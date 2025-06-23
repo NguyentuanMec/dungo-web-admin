@@ -1,0 +1,23 @@
+# Bỏ qua các file môi trường
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+
+# Vercel local
+.vercel
+
+# IDE/editor configs (VS Code...)
+.vscode/
+*.swp
